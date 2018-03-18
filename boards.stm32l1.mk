@@ -13,4 +13,3 @@ $(eval $(call stm32l1board,32l152cdiscovery,GPIOB,GPIO6))
 $(eval $(call stm32l1board,stm32l-discovery,GPIOB,GPIO6))
 $(eval $(call stm32l1board,nucleo-l152re,GPIOA,GPIO5))
 $(eval $(call stm32l1board,32l100cdiscovery,GPIOB,GPIO6))
-
