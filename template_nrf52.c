@@ -1,10 +1,10 @@
 #include <libopencm3/nrf/gpio.h>
 
 int main(void) {
-	gpio_mode_setup(PORT_LED1, GPIO_MODE_OUTPUT, GPIO_CNF_OUTPUT_PUSHPULL, PIN_LED1);
+	gpio_mode_setup(PORT_LED1, GPIO_MODE_OUTPUT, GPIO_PUPD_PULLUP, PIN_LED1);
 	gpio_set(PORT_LED1, PIN_LED1);
 #if defined(PORT_LED2)
-        gpio_mode_setup(PORT_LED2, GPIO_MODE_OUTPUT, GPIO_CNF_OUTPUT_PUSHPULL, PIN_LED2);
+        gpio_mode_setup(PORT_LED2, GPIO_MODE_OUTPUT, GPIO_PUPD_PULLUP, PIN_LED2);
 #endif
 	while(1) {
 		/* wait a little bit */
