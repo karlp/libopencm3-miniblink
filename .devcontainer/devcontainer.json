@@ -1,0 +1,40 @@
+// For format details, see https://aka.ms/devcontainer.json
+{
+    "name": "ceres-arm",
+    "build": {
+        "dockerfile": "Dockerfile.alpine",
+        "args": {
+        }
+    },
+    // Install relevant extensions in the dev container
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "mcu-debug.debug-tracker-vscode",
+                "ms-vscode.cpptools-extension-pack",
+                "marus25.cortex-debug",
+            ],
+        }
+    },
+    "features": {
+        "./feature-openocd": {
+            "release": "master",
+            //"release": "v0.12.0",
+            //"patch": "8089/3",
+        }
+    },
+    "runArgs": [
+        "--device=/dev/bus/usb",
+    ],
+    // expose openocd defaults, plus cortex-debug defaults
+    "forwardPorts": [
+        3333,
+        4444,
+        50000,
+        50001,
+        50002,
+        60000,
+        60001,
+        60002
+    ],
+}

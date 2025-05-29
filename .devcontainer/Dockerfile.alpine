@@ -1,0 +1,43 @@
+# Container intended to be used with devcontainers
+# Karl Palsson <karl.palsson@tweak.au> 2025
+# FYI, neither 3.18, nor 3.21 have a nice musl/gcompat for arm-none-eabi-gdb.  (gcc works fine)
+ARG VERSION=3.21
+# Note, this old 2020q4 is too old to actually use, it needs python2.7 and all sorts of other shits...
+# This is also the legacy url for releases pre to 11.2-2022.02
+#ARG TOOLCHAIN_URL=https://developer.arm.com/-/media/Files/downloads/gnu-rm/10-2020q4/gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2
+#ARG ARM_VERSION=12.3.rel1
+ARG ARM_VERSION=14.2.rel1
+ARG ARM_ARCH=x86_64
+ARG TOOLCHAIN_URL="https://developer.arm.com/-/media/Files/downloads/gnu/${ARM_VERSION}/binrel/arm-gnu-toolchain-${ARM_VERSION}-${ARM_ARCH}-arm-none-eabi.tar.xz"
+# Alternate mirror...
+# ARG TOOLCHAIN_URL=https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu/${ARM_VERSION}/binrel/arm-gnu-toolchain-${ARM_VERSION}-${ARM_ARCH}-arm-none-eabi.tar.xz"
+
+FROM scratch AS src
+# This repeat is to get what the final value of TOOLCHAIN_URL was inside _this_ FROM section.
+ARG TOOLCHAIN_URL
+ADD ${TOOLCHAIN_URL} /toolchain.tar.xz
+
+FROM docker.io/alpine:$VERSION
+
+ARG TOOLS_PATH=/tools
+RUN apk update && apk add --no-cache --virtual build-dependencies \
+	build-base \
+	gcompat libc6-compat libgcc libstdc++ g++ gcc \
+	make git musl-dev \
+	git xz gdb-multiarch \
+	libtool automake autoconf pkgconf \
+	libusb-dev hidapi-dev libjaylink-dev jimtcl-dev
+
+RUN --mount=from=src,target=/src <<EOF
+mkdir -p ${TOOLS_PATH}
+tar -xf /src/toolchain.tar.xz --strip-components=1 -C ${TOOLS_PATH}
+EOF
+
+# Arm gdb is notoriously wonky for hard deps.
+# We're going to use plain multiarch gdb instead, but to avoid reconfiguring everything....
+RUN mv /tools/bin/arm-none-eabi-gdb /tools/bin/arm-none-eabi-gdb.arm && \
+	ln -s /usr/bin/gdb-multiarch /tools/bin/arm-none-eabi-gdb && \
+	echo "linked gdb-multiarch as arm-none-eabi-gdb"
+
+# Add Toolchain to PATH
+ENV PATH="$PATH:${TOOLS_PATH}/bin"

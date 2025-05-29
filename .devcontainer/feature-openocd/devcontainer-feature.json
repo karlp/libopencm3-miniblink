@@ -1,0 +1,27 @@
+{
+    "name": "OpenOCD",
+    "id": "feature-openocd",
+    "description": "Install OpenOCD from source, either a release tag, or a gerrit patch/revision",
+    "version": "1.0.0",
+    "options": {
+        "release": {
+            "type": "string",
+            "proposals": [
+                "v0.12.0",
+                "master",
+            ],
+            "default": "v0.12.0",
+            "description": "Choose a tag in the repo",
+        },
+        "patch": {
+            "type": "string",
+            "proposals": [
+                "8089/2",
+                "8989",
+                "<anypatch>/<anyrev>"
+            ],
+            "default": "",
+            "description": "Provide a gerrit <patchid>/<?revision=1> to build instead. Will supersede 'release'",
+        }
+    }
+}
